@@ -7,14 +7,14 @@ class SDA:
         self.emit = labels
         self.next_state = transitions
         self.reset()
-        
+
     # reset should be called every time a new map is generated.
     def reset(self):
         # Initialize parameters for producing bits
         self.bitstring = self.emit[0]
         self.num_bits = 0 # Number of bits produced so far. Grand total
         self.cur_bit = 0 # Number of bits produced so far on the current string
-        
+
     # Feed the current output string back into the SDA to generate a longer output string.
     def expand_string(self):
         cur_node = 0
@@ -23,7 +23,7 @@ class SDA:
             cur_node = self.next_state[cur_node][int(self.bitstring[i])]
             new_string = new_string + self.emit[cur_node]
         self.bitstring = new_string
-        
+
     # Return a single bit (0 or 1), expanding the output string if necessary.
     def get_bit(self):
         if self.cur_bit >= len(self.bitstring):
@@ -33,20 +33,21 @@ class SDA:
         self.cur_bit += 1
         self.num_bits += 1
         return int(bit)
-    
+
     # Get multiple bits. This is the main interface for map generation.
     def get_bits(self,n):
         return [self.get_bit() for i in range(n)]
-        
+
 # Get multiple bits for map generation
 
-# Use method == "SDA" to use the SDA s, and method == "Random" to return random bits, in which case s is ignored.
+# Use method == "SDA" to use the SDA
+# method == "Random" to return random bits, s is ignored.
 def get_bits(n,s,method):
     if method == "SDA":
         return s.get_bits(n)
     else:
         return [random.randint(0,1) for i in range(n)]
-    
+
 # A wrapper around get_bits that coverts to an integer from 0 to 2^n-1
 def get_num(n,s,method):
     bits = get_bits(n,s,method)

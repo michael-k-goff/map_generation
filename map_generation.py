@@ -1,6 +1,5 @@
 # Dependencies
 import random
-import png
 import os
 import sys
 from sda import *
@@ -15,7 +14,7 @@ mnm = 1 # Maximum number of mutations
 sda_size = 12 # Number of nodes in each SDA
 population_size = 32 # Number of SDAs kept in a population
 tournament_size = 7 # Number of SDAs chosen for mating, of which the two best are crossed over.
-generations = 10000 # Number of updatings to do
+generations = 5 # Number of updatings to do
 
 # Some functions that are necessary for running the genetic algorithm
 
@@ -117,64 +116,13 @@ class Population:
                 best = i
         return self.pop[best]
 
-# Plotting functions
-
-# Same the map to a file
-def draw_map(rooms,filename):
-    envelope = get_envelope(rooms)
-    if envelope[1]-envelope[0] > 100 or envelope[3]-envelope[2] > 100:
-        print("Too big")
-        return
-    pixels = [[255]*(30*(envelope[1]-envelope[0])) for i in range(10*(envelope[3]-envelope[2]))]
-
-    # Set up the grid
-    for i in range(envelope[3]-envelope[2]):
-        for j in range(envelope[1]-envelope[0]):
-            for k in range(10):
-                pixels[10*i+0][30*j+0+3*k] = 0
-                pixels[10*i+0][30*j+1+3*k] = 0
-                pixels[10*i+0][30*j+2+3*k] = 0
-
-                pixels[10*i+9][30*j+0+3*k] = 0
-                pixels[10*i+9][30*j+1+3*k] = 0
-                pixels[10*i+9][30*j+2+3*k] = 0
-
-                pixels[10*i+k][30*j+0] = 0
-                pixels[10*i+k][30*j+1] = 0
-                pixels[10*i+k][30*j+2] = 0
-
-                pixels[10*i+k][30*j+27] = 0
-                pixels[10*i+k][30*j+28] = 0
-                pixels[10*i+k][30*j+29] = 0
-
-    # Draw the rooms
-    for i in range(len(rooms)):
-        minx = 10*(rooms[i].border[0] - envelope[0])+1
-        maxx = 10*(rooms[i].border[1] - envelope[0])-1
-        miny = 10*(rooms[i].border[2] - envelope[2])+1
-        maxy = 10*(rooms[i].border[3] - envelope[2])-1
-        for x in range(minx,maxx):
-            for y in range(miny,maxy):
-                if i == 0:
-                    pixels[y][3*x+0] = 255
-                    pixels[y][3*x+1] = 0
-                    pixels[y][3*x+2] = 0
-                elif (rooms[i].border[1] == rooms[i].border[0]+1 or rooms[i].border[3] == rooms[i].border[2]+1):
-                    pixels[y][3*x+0] = 0
-                    pixels[y][3*x+1] = 255
-                    pixels[y][3*x+2] = 0
-                else:
-                    pixels[y][3*x+0] = 0
-                    pixels[y][3*x+1] = 0
-                    pixels[y][3*x+2] = 255
-    # Set up for writing the file
-    for i in range(len(pixels)):
-        pixels[i] = tuple(pixels[i])
-    with open(filename,"wb") as f:
-        w = png.Writer(10*(envelope[1]-envelope[0]), 10*(envelope[3]-envelope[2]))
-        w.write(f, pixels)
-
 # Draw map from an SDA
 def draw_from_sda(s,filename):
-    rooms = generate_map(s,"SDA")
-    draw_map(rooms,filename)
+    map_ = generate_map(s,"SDA")
+    map_.draw_map(filename)
+
+# Testing
+pop = Population()
+pop.evolve()
+best = pop.get_best()
+draw_from_sda(best,"asdf.png")

@@ -1,12 +1,17 @@
 # Generator class
 
-from map import *
-from sda import *
+import random
+
+from map import Map, Room
+from sda import SDA
+
+# Hyperparameters related to  map generation.
+num_room_attempts = 100 # Number of times we try to place a room in generating the map.
 
 # gen is the generation object, mostly likely an SDA.
 # method is either "SDA" or "Random".
-# If method is "Random", gen is ignored.
-# If method is "SDA", then gen is the SDA which generates maps.
+# If method is "Random", gen is ignored and bits are generated randomly.
+# If method is "SDA", then gen is the SDA which generates bits for the map.
 class Generator:
     def __init__(self, gen, method):
         self.gen = gen
@@ -24,14 +29,14 @@ class Generator:
         bits = self.get_bits(n)
         return sum([bits[i]*2**i for i in range(len(bits)) ])
 
-    # Make the map
-    # s is an SDA, method tells us how to generate the bits.
-    # Options for method include "SDA", which uses the SDA, and "Random", which uses random bits
-    # Other options might be added in the future
-    # Note that if method is "Random", we will need a value for s, which could just as well be None.
+    # Make the map from the generator's string of bits.
     def generate_map(self):
+
+        # Reset the SDA. Otherwise it will generate the wrong bits.
         if self.method == "SDA":
             self.gen.reset()
+
+        # Initialize the rooms. Note that the Map object is not created until the end.
         rooms = [0]*num_room_attempts
         rooms[0] = Room(-2,2,-2,2) # Initial room.
         num_rooms = 1
@@ -101,7 +106,7 @@ class Generator:
         return Map(rooms[:num_rooms])
 
     # Score by generating a map and scoring
-    # Should not be used if method is "Random", as score will not be consistent.
+    # Should not be used if method is "Random", as the score will not be consistent.
     def evaluate(self):
         map_ = self.generate_map()
         return map_.evaluate()

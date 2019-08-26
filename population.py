@@ -2,20 +2,19 @@
 import random
 import os
 import sys
-from sda import *
-from map import *
-from generator import *
+from sda import SDA
+from generator import Generator
 
 # Project hyperparameters
 
 debug_mode = 1 # Set if you want to see progress displayed while running the evolutionary algorithm
 
-# Hyperparameters related to the learning algorithms
+# Hyperparameters related to the learning algorithm
 mnm = 1 # Maximum number of mutations
 sda_size = 12 # Number of nodes in each SDA
 population_size = 32 # Number of SDAs kept in a population
 tournament_size = 7 # Number of SDAs chosen for mating, of which the two best are crossed over.
-generations = 5 # Number of updatings to do
+generations = 5 # Number of iterations of the genetic algorithm.
 
 class Population:
     def __init__(self):
@@ -103,6 +102,7 @@ class Population:
         self.scores[worst] = Generator(new1,"SDA").evaluate()
         self.scores[second_worst] = Generator(new2,"SDA").evaluate()
 
+    # Perform the full genetic algorithm.
     def evolve(self):
         if debug_mode:
             print( "Initial Population: Max score is " + str(max(self.scores)) )
@@ -111,12 +111,11 @@ class Population:
                 print( "Generation " + str(i) + ": Max score is " + str(max(self.scores)) )
             self.update()
 
+    # Return the best specimen as an SDA.
+    # Meant to be called only after the genetic algorithm has been run.
     def get_best(self):
-        best = 0
-        for i in range(population_size):
-            if self.scores[i] > self.scores[best]:
-                best = i
-        return self.pop[best]
+        return self.pop[self.scores.index(max(self.scores))]
 
+    # Draw the map from the best SDA.
     def draw_map(self, filename):
         Generator(self.get_best(),"SDA").draw_map(filename)

@@ -1,8 +1,5 @@
 import png
 
-# Hyperparameters related to the map.
-num_room_attempts = 100 # Number of times we try to place a room in generating the map.
-
 # A single room in the map
 class Room:
     def __init__(self,l,r,b,t):

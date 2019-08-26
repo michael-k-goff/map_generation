@@ -14,7 +14,7 @@ mnm = 1 # Maximum number of mutations
 sda_size = 12 # Number of nodes in each SDA
 population_size = 32 # Number of SDAs kept in a population
 tournament_size = 7 # Number of SDAs chosen for mating, of which the two best are crossed over.
-generations = 5 # Number of iterations of the genetic algorithm.
+generations = 10000 # Number of iterations of the genetic algorithm.
 
 class Population:
     def __init__(self):

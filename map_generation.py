@@ -4,6 +4,7 @@ import os
 import sys
 from sda import *
 from map import *
+from generator import *
 
 # Project hyperparameters
 
@@ -71,7 +72,7 @@ def crossover(s1,s2):
 class Population:
     def __init__(self):
         self.pop = [random_sda() for i in range(population_size)]
-        self.scores = [evaluate_sda(self.pop[i]) for i in range(population_size)]
+        self.scores = [Generator(self.pop[i],"SDA").evaluate() for i in range(population_size)]
     def update(self):
         selection = random.sample(range(population_size),tournament_size)
 
@@ -98,8 +99,8 @@ class Population:
         new1, new2 = crossover(self.pop[best], self.pop[second_best])
         self.pop[worst] = new1
         self.pop[second_worst] = new2
-        self.scores[worst] = evaluate_sda(new1)
-        self.scores[second_worst] = evaluate_sda(new2)
+        self.scores[worst] = Generator(new1,"SDA").evaluate()
+        self.scores[second_worst] = Generator(new2,"SDA").evaluate()
 
     def evolve(self):
         if debug_mode:
@@ -116,13 +117,10 @@ class Population:
                 best = i
         return self.pop[best]
 
-# Draw map from an SDA
-def draw_from_sda(s,filename):
-    map_ = generate_map(s,"SDA")
-    map_.draw_map(filename)
+    def draw_map(self, filename):
+        Generator(self.get_best(),"SDA").draw_map(filename)
 
 # Testing
 pop = Population()
 pop.evolve()
-best = pop.get_best()
-draw_from_sda(best,"asdf.png")
+pop.draw_map("asdf.png")

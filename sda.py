@@ -37,18 +37,3 @@ class SDA:
     # Get multiple bits. This is the main interface for map generation.
     def get_bits(self,n):
         return [self.get_bit() for i in range(n)]
-
-# Get multiple bits for map generation
-
-# Use method == "SDA" to use the SDA
-# method == "Random" to return random bits, s is ignored.
-def get_bits(n,s,method):
-    if method == "SDA":
-        return s.get_bits(n)
-    else:
-        return [random.randint(0,1) for i in range(n)]
-
-# A wrapper around get_bits that coverts to an integer from 0 to 2^n-1
-def get_num(n,s,method):
-    bits = get_bits(n,s,method)
-    return sum([bits[i]*2**i for i in range(len(bits)) ])
